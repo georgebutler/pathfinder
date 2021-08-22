@@ -4,21 +4,51 @@
     <div>Register</div>
     <div>
       Username:
-      <input type="text">
+      <input v-model="username" type="text" required>
     </div>
     <div>
-      <button>Create Account</button>
+      <Alert v-for="error in errors" :key="error.message" :message="error.message" />
+    </div>
+    <div>
+      <button @click="submit">
+        Create Account
+      </button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  mounted () {
-    this.$axios.$get('game/status')
-      .then((res) => {
-        console.log(res.status)
-      })
+  data () {
+    return {
+      username: '',
+      errors: []
+    }
+  },
+  methods: {
+    submit () {
+      if (this.username === '') { return }
+
+      this.$axios.$post(`users/${this.username}/claim`)
+        .then((res) => {
+          this.$store.dispatch('auth/login', { ...res })
+        })
+        .catch((e) => {
+          this.errors = []
+
+          if (e.response) {
+            if (e.response.status === 409) {
+              this.errors.push({
+                message: 'usernameTaken'
+              })
+            }
+          } else {
+            this.errors.push({
+              message: 'networkError'
+            })
+          }
+        })
+    }
   }
 }
 </script>

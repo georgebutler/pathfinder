@@ -4,7 +4,10 @@
     <div>Login</div>
     <div>
       Token:
-      <input v-model="token" type="password">
+      <input v-model="token" type="password" required>
+    </div>
+    <div>
+      <Alert v-for="error in errors" :key="error.message" :message="error.message" />
     </div>
     <div>
       <button @click="submit">
@@ -18,20 +21,32 @@
 export default {
   data () {
     return {
-      username: '',
       token: '',
       errors: []
     }
   },
   methods: {
     submit () {
-      this.$axios.$get('my/account', { token: this.token })
+      if (this.token === '') { return }
+
+      this.$axios.$get('my/account', { params: { token: this.token } })
         .then((res) => {
-          console.log(res)
-          alert('Welcome!')
+          this.$store.dispatch('auth/login', { ...res, token: this.token })
         })
         .catch((e) => {
-          this.errors = e
+          this.errors = []
+
+          if (e.response) {
+            if (e.response.status === 401) {
+              this.errors.push({
+                message: 'invalidToken'
+              })
+            }
+          } else {
+            this.errors.push({
+              message: 'networkError'
+            })
+          }
         })
     }
   }
