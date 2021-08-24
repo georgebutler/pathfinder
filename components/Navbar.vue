@@ -10,6 +10,9 @@
         <NuxtLink to="/dashboard" class="font-medium text-gray-500 hover:text-gray-900">
           Dashboard
         </NuxtLink>
+        <NuxtLink to="/loans" class="font-medium text-gray-500 hover:text-gray-900">
+          Loans
+        </NuxtLink>
       </span>
       <span v-else>
         <NuxtLink to="/register" class="font-medium text-gray-500 hover:text-gray-900">
