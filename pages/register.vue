@@ -1,7 +1,9 @@
 <template>
   <div>
     <Navbar />
-    <div>Register</div>
+    <div class="text-lg font-bold">
+      Register
+    </div>
     <div>
       Username:
       <input v-model="username" type="text" required>
@@ -19,6 +21,11 @@
 
 <script>
 export default {
+  middleware ({ store, redirect }) {
+    if (store.state.auth.token.length > 0) {
+      return redirect('/dashboard')
+    }
+  },
   data () {
     return {
       username: '',
@@ -32,6 +39,9 @@ export default {
       this.$axios.$post(`users/${this.username}/claim`)
         .then((res) => {
           this.$store.dispatch('auth/login', { ...res })
+            .then(() => {
+              this.$router.push('/dashboard')
+            })
         })
         .catch((e) => {
           this.errors = []

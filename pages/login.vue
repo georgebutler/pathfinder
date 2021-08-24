@@ -1,7 +1,9 @@
 <template>
   <div>
     <Navbar />
-    <div>Login</div>
+    <div class="text-lg font-bold">
+      Login
+    </div>
     <div>
       Token:
       <input v-model="token" type="password" required>
@@ -27,27 +29,34 @@ export default {
   },
   methods: {
     submit () {
-      if (this.token === '') { return }
+      this.errors = []
 
-      this.$axios.$get('my/account', { params: { token: this.token } })
-        .then((res) => {
-          this.$store.dispatch('auth/login', { ...res, token: this.token })
+      if (this.token === '') {
+        this.errors.push({
+          message: 'missingToken'
         })
-        .catch((e) => {
-          this.errors = []
-
-          if (e.response) {
-            if (e.response.status === 401) {
+      } else {
+        this.$axios.$get('my/account', { params: { token: this.token } })
+          .then((res) => {
+            this.$store.dispatch('auth/login', { ...res, token: this.token })
+              .then(() => {
+                this.$router.push('/dashboard')
+              })
+          })
+          .catch((e) => {
+            if (e.response) {
+              if (e.response.status === 401) {
+                this.errors.push({
+                  message: 'invalidToken'
+                })
+              }
+            } else {
               this.errors.push({
-                message: 'invalidToken'
+                message: 'networkError'
               })
             }
-          } else {
-            this.errors.push({
-              message: 'networkError'
-            })
-          }
-        })
+          })
+      }
     }
   }
 }
