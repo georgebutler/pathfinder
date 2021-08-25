@@ -1,20 +1,20 @@
 <template>
   <div>
     <Navbar />
+    <Alert v-for="error in errors" :key="error.message">
+      {{ error.message }}
+    </Alert>
     <div class="text-lg font-bold">
       Login
     </div>
     <div>
       Token:
-      <input v-model="token" type="password" required>
+      <input v-model="token" type="password" required :disabled="loading">
     </div>
     <div>
-      <Alert v-for="error in errors" :key="error.message" :message="error.message" />
-    </div>
-    <div>
-      <button @click="submit">
+      <Button :disabled="loading" @click.native="submit">
         Login
-      </button>
+      </Button>
     </div>
   </div>
 </template>
@@ -24,7 +24,8 @@ export default {
   data () {
     return {
       token: '',
-      errors: []
+      errors: [],
+      loading: false
     }
   },
   methods: {
@@ -55,6 +56,9 @@ export default {
                 message: 'networkError'
               })
             }
+          })
+          .finally(() => {
+            this.loading = false
           })
       }
     }

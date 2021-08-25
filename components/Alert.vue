@@ -6,7 +6,7 @@
       </div>
       <div class="ml-3 flex-1 md:flex md:justify-between">
         <div class="text-sm text-red-700">
-          {{ message }}
+          <slot />
         </div>
       </div>
     </div>
@@ -18,7 +18,7 @@ export default {
   props: {
     message: {
       type: String,
-      required: true
+      default: ''
     }
   }
 }

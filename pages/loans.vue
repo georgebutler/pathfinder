@@ -1,7 +1,9 @@
 <template>
   <div>
     <Navbar />
-    <Alert v-for="error in errors" :key="error.message" :message="error.message" />
+    <Alert v-for="error in errors" :key="error.message">
+      {{ error.message }}
+    </Alert>
     <div class="text-lg font-bold">
       Loans
     </div>
@@ -15,7 +17,9 @@
         <div>Rate: {{ loan.rate }}</div>
         <div>Term: {{ loan.termInDays }} Days</div>
         <div>{{ loan.collateralRequired ? 'Collateral Required' : 'No Collateral Required' }}</div>
-        <Button>Aquire Loan</Button>
+        <Button :disabled="loading" @click.native="aquireLoan(loan.type)">
+          Aquire Loan
+        </Button>
       </div>
     </div>
   </div>
@@ -28,6 +32,7 @@ export default {
     return {
       errors: [],
       loans: [],
+      aquiredLoan: {},
       loading: true
     }
   },
@@ -49,6 +54,22 @@ export default {
       .finally(() => {
         this.loading = false
       })
+  },
+  methods: {
+    aquireLoan (type) {
+      this.$axios.$get('my/loans', { params: { token: this.token, type } })
+        .then((res) => {
+          this.aquiredLoan = res.loans
+        })
+        .catch((e) => {
+          this.errors.push({
+            message: 'networkError'
+          })
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    }
   }
 }
 </script>

@@ -1,15 +1,15 @@
 <template>
   <div>
     <Navbar />
+    <Alert v-for="error in errors" :key="error.message">
+      {{ error.message }}
+    </Alert>
     <div class="text-lg font-bold">
       Register
     </div>
     <div>
       Username:
       <input v-model="username" type="text" required>
-    </div>
-    <div>
-      <Alert v-for="error in errors" :key="error.message" :message="error.message" />
     </div>
     <div>
       <button @click="submit">

@@ -1,9 +1,9 @@
 <template>
   <div>
     <Navbar />
-    <div>
-      <Alert v-for="error in errors" :key="error.message" :message="error.message" />
-    </div>
+    <Alert v-for="error in errors" :key="error.message">
+      {{ error.message }}
+    </Alert>
     <div class="text-lg font-bold">
       Pathfinder
     </div>
